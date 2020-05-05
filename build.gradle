@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+}
+
+group 'com.dason'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+//编译后的java版本
+targetCompatibility = 1.8
+
+repositories {
+    //使用maven中央仓库
+    mavenCentral()
+}
+
+dependencies {
+
+//    testCompile group: 'junit', name: 'junit', version: '4.12' //传统表示方式
+    //另一种更方便的表达方式
+    testCompile(
+            "junit:junit:4.12"
+    )
+}
