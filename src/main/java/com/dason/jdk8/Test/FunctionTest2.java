@@ -46,7 +46,7 @@ public class FunctionTest2 {
         return function1.andThen(function2).apply(a);
     }
 
-    public int compute3(int a, int b, BiFunction<Integer,Integer,Integer> biFunction) {
+    public int compute3(int a, int b, BiFunction<Integer, Integer, Integer> biFunction) {
         return biFunction.apply(a, b);
     }
 
