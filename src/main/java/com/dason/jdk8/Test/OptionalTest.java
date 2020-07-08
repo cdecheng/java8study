@@ -21,7 +21,6 @@ public class OptionalTest {
         //新的lamba的方式写--推荐使用Optional的使用方式
         shuaige.ifPresent(item -> System.out.println(shuaige.get()));
 
-
     }
 
 }
