@@ -25,6 +25,7 @@ public class MyCollectors<T> implements Collector<T, Set<T>, Set<T>> {
     public BiConsumer<Set<T>, T> accumulator() {
         System.out.println("accumulator invoked");
         return (Set<T> set, T t) -> set.add(t);
+//        return HashSet::add;
     }
 
     @Override

@@ -19,6 +19,7 @@ dependencies {
 //    testCompile group: 'junit', name: 'junit', version: '4.12' //传统表示方式
     //另一种更方便的表达方式
     testCompile(
-            "junit:junit:4.12"
+            "junit:junit:4.12",
+            "joda-time:joda-time:2.2"
     )
 }

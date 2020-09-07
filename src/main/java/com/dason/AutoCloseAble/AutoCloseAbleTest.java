@@ -21,15 +21,16 @@ public class AutoCloseAbleTest implements AutoCloseable {
     }
 
     public static void main(String[] args) throws Exception {
-//        AutoCloseAbleTest test = new AutoCloseAbleTest();
-//        // 常规的写法
-//        try {
-//            test.ioOperation();
-//        } catch (Exception e) {
-//            System.out.println(e);
-//        } finally {
-//          // 这里是关闭流的逻辑操作
-//        }
+
+        // 常规的写法
+        AutoCloseAbleTest test0 = new AutoCloseAbleTest();
+        try {
+            test0.ioOperation();
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+          // 这里是关闭流的逻辑操作
+        }
 
         // 上面是java7之前的有IO操作，需要手动关闭流的写法，但是在java7之后，提供了AutoCloseAble接口，用来优化这种写法
         try(AutoCloseAbleTest test = new AutoCloseAbleTest()) {
