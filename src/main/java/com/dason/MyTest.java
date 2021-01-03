@@ -1,5 +1,6 @@
 package com.dason;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,10 +26,22 @@ public class MyTest {
 //                list.remove(item); }
 //        }
         // 无法正常执行，并发修改异常 java.util.ConcurrentModificationException
-        for (String item : list) {
-            if ("2".equals(item)) {
-                list.remove(item); }
+//        for (String item : list) {
+//            if ("2".equals(item)) {
+//                list.remove(item); }
+//        }
+
+
+        try {
+            Class<?> aClass = Class.forName("com.dason.MyTest");
+            Method[] methods = aClass.getMethods();
+            for (Method method : methods) {
+                System.out.println(method);
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
+
         System.out.println(list);
     }
 
