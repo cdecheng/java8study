@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false">
+    <property name="logDir" value="/Users/Dason/work/swjcode/var/log/3vjia"/>
+<!--    <property name="logDir" value="/var/log/3vjia"/>-->
+    <springProperty scope="context" name="appName" source="spring.application.name" defaultValue="application"/>
+<!--    <conversionRule conversionWord="ip" converterClass="com.swj.basic.log.converter.LogIpConverter"/>-->
+
+    <!-- 控制台输出 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%logger{50} %line] - %marker %msg [%X{_REQ_ID}]%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!-- INFO日志信息 -->
+    <appender name="INFO_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <pattern>
+                    <pattern>
+                        {"db":"${appName}","table":"INFO","time":"%d{yyyy-MM-dd HH:mm:ss.SSS}"}
+                    </pattern>
+                </pattern>
+                <nestedField>
+                    <fieldName>data</fieldName>
+                    <providers>
+                        <pattern>
+                            <pattern>
+                                {"timestamp":"%d{yyyy-MM-dd HH:mm:ss.SSS}","traceid":"%X{_REQ_ID}","parentid":"%X{_REQ_PARENT_ID}","id":"%X{_REQ_SPAN_ID}","localip":"%ip","localservicename":"${appName}","thread":"%thread","level":"%-5level","logger":"%logger{50} %line","message":"%msg"}
+                            </pattern>
+                        </pattern>
+                        <logstashMarkers/>
+                    </providers>
+                </nestedField>
+            </providers>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${logDir}/${appName}-info-%d{yyyyMMdd}.%i.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>500MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>DENY</onMatch>
+            <onMismatch>ACCEPT</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- ERROR日志信息 -->
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <pattern>
+                    <pattern>
+                        {"db":"${appName}","table":"ERROR","time":"%d{yyyy-MM-dd HH:mm:ss.SSS}"}
+                    </pattern>
+                </pattern>
+                <nestedField>
+                    <fieldName>data</fieldName>
+                    <providers>
+                        <pattern>
+                            <pattern>
+                                {"timestamp":"%d{yyyy-MM-dd HH:mm:ss.SSS}","traceid":"%X{_REQ_ID}","parentid":"%X{_REQ_PARENT_ID}","id":"%X{_REQ_SPAN_ID}","localip":"%ip","localservicename":"${appName}","thread":"%thread","level":"%-5level","logger":"%logger{50} %line","message":"%msg"}
+                            </pattern>
+                        </pattern>
+                        <logstashMarkers/>
+                        <stackTrace>
+                            <fieldNames>
+                                <stackTrace>exception</stackTrace>
+                            </fieldNames>
+                        </stackTrace>
+                    </providers>
+                </nestedField>
+            </providers>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${logDir}/${appName}-error-%d{yyyyMMdd}.%i.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>500MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <appender name="INFO_FILE_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>0</discardingThreshold>
+        <queueSize>1024</queueSize>
+        <appender-ref ref="INFO_FILE"/>
+        <includeCallerData>true</includeCallerData>
+    </appender>
+
+    <appender name="ERROR_FILE_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>0</discardingThreshold>
+        <queueSize>1024</queueSize>
+        <appender-ref ref="ERROR_FILE"/>
+        <includeCallerData>true</includeCallerData>
+    </appender>
+
+    <appender name="STDOUT_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>0</discardingThreshold>
+        <queueSize>1024</queueSize>
+        <appender-ref ref="STDOUT"/>
+        <includeCallerData>true</includeCallerData>
+    </appender>
+
+    <!-- 日志输出级别 -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT_ASYNC"/>
+        <appender-ref ref="INFO_FILE_ASYNC"/>
+        <appender-ref ref="ERROR_FILE_ASYNC"/>
+    </root>
+
+    <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>
+</configuration>
